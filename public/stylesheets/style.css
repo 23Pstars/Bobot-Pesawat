@@ -1,0 +1,7 @@
+body {
+    padding-top: 50px;
+}
+
+input.custom-input {
+    padding: 3px 5px !important;
+}

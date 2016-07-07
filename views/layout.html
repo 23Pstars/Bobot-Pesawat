@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>{% block title %}Title pada Layout{% endblock %}</title>
+
+    <link rel="stylesheet" href="/stylesheets/semantic.min.css">
+    <link rel="stylesheet" href="/stylesheets/pikaday.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+
+    <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/semantic.min.js"></script>
+    <script type="text/javascript" src="/javascripts/Chart.js"></script>
+    <script type="text/javascript" src="/javascripts/moment.js"></script>
+    <script type="text/javascript" src="/javascripts/pikaday.js"></script>
+
+</head>
+<body>
+{% block menu %}{% endblock %}
+{% block content %}{% endblock %}
+</body>
+
+</html>

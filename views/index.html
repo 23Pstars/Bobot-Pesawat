@@ -1,0 +1,278 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard &raquo; {{title}}{% endblock %}
+
+{% block menu %}
+<div class="ui fixed inverted menu">
+    <div class="ui container">
+        <a href="/" class="header item"><i class="plane icon"></i>Bobot Pesawat</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="ui doubling stackable grid container">
+
+    <div class="sixteen wide column">
+        <h2 class="ui header">
+            <i class="plane icon"></i>
+            <div class="content">
+                {{title}}
+                <div class="sub header">Analytical Hierarchy Proces (AHP)</div>
+            </div>
+        </h2>
+    </div>
+
+    <div class="eleven wide column">
+
+        <table class="ui single line table">
+            <thead>
+            <tr>
+                <th>Criteria</th>
+                {% for item in bootstrap_data.criteria.aliases %}
+                <th>{{item}}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in bootstrap_data.criteria.labels %}
+            <tr>
+                <td>{{item}}</td>
+                {% for subitem in bootstrap_data.criteria.values[loop.key] %}
+                <td>
+                    <div class="ui fluid input">
+                        <input class="custom-input" type="text" value="{{subitem|3PrecisionNumber}}" />
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            <tr class="positive">
+                <td>Total</td>
+                {% for item in data_bobot.total %}
+                <td>{{item|3PrecisionNumber}}</td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="five wide column">
+        <div class="ui fluid card ahp-container">
+            <div class="content">
+                <h2 class="header">AHP Method</h2>
+            </div>
+            <div class="content">
+                <div class="ui inverted active dimmer">
+                    <div class="ui text loader">Loading</div>
+                </div>
+                <canvas id="ahp" width="200" height="150"></canvas>
+            </div>
+            <div class="extra content">
+                Statistics
+            </div>
+        </div>
+    </div>
+
+    <div class="sixteen wide column">
+        <table class="ui compact celled definition table">
+            <thead>
+            <tr>
+                <th>Weight</th>
+                {% for item in bootstrap_data.criteria.aliases %}
+                <th>{{item}}</th>
+                {% endfor %}
+                <th>Bobot Persepsi</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in bootstrap_data.criteria.labels %}
+            <tr>
+                <td>{{item}}</td>
+                {% for subitem in data_bobot.weight[loop.key] %}
+                <td>{{subitem|3PrecisionNumber}}</td>
+                {% endfor %}
+                <td class="positive">{{data_bobot.means[loop.key]|3PrecisionNumber}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="sixteen wide column">
+        <br/>
+        <h2 class="ui header">
+            <i class="plane icon"></i>
+            <div class="content">
+                {{title}}
+                <div class="sub header">Technique For Order Preference by Similarity to Ideal Solution (TOPSIS)</div>
+            </div>
+        </h2>
+    </div>
+
+    <div class="eleven wide column">
+        <table class="ui compact celled definition table">
+            <thead>
+            <tr>
+                <th>Aircraft Alternative</th>
+                {% for item in bootstrap_data.criteria.aliases %}
+                <th>
+                    {{item}}<br/>
+                    {{bootstrap_data.aircraft.labels[loop.key]}}
+                </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in bootstrap_data.aircraft.names %}
+            <tr>
+                <td>{{item}}</td>
+                {% for subitem in bootstrap_data.aircraft.values[loop.key] %}
+                <td>
+                    <div class="ui fluid input">
+                        <input class="custom-input" type="text" value="{{subitem}}" />
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="five wide column">
+        <div class="ui fluid card topsis-container">
+            <div class="content">
+                <h2 class="header">TOPSIS Method</h2>
+            </div>
+            <div class="content">
+                <div class="ui inverted active dimmer">
+                    <div class="ui text loader">Loading</div>
+                </div>
+                <canvas id="topsis" width="200" height="150"></canvas>
+            </div>
+            <div class="extra content">
+                Statistics
+            </div>
+        </div>
+    </div>
+
+    <div class="sixteen wide column">
+        <table class="ui compact celled definition table">
+            <thead>
+            <tr>
+                <th>Criteria Weight</th>
+                {% for item in bootstrap_data.aircraft.labels %}
+                <th>{{item}}</th>
+                {% endfor %}
+                <th>D-</th>
+                <th>D+</th>
+                <th>V</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in bootstrap_data.aircraft.names %}
+            <tr>
+                <td>{{item}}</td>
+                {% for subitem in data_aircraft.weight2[loop.key] %}
+                <td>{{subitem|3PrecisionNumber}}</td>
+                {% endfor %}
+                <td class="negative">{{data_aircraft.d_min[loop.key]|5PrecisionNumber}}</td>
+                <td class="positive">{{data_aircraft.d_plus[loop.key]|5PrecisionNumber}}</td>
+                <td>{{data_aircraft.v[loop.key]|5PrecisionNumber}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<input type="hidden" id="bootstrap_data" value="{{bootstrap_data|json}}" />
+<input type="hidden" id="data_bobot" value="{{data_bobot|json}}" />
+<input type="hidden" id="data_aircraft" value="{{data_aircraft|json}}" />
+
+<script>
+    var AHPChart = null, TOPSISChart = null;
+    var BootstrapData = JSON.parse( $('#bootstrap_data').val() ),
+            DataBobot = JSON.parse( $('#data_bobot').val() ),
+            DataAircraft = JSON.parse( $( '#data_aircraft' ).val() );
+    var colorLists = [
+        "#1976D2", "#689F38", "#E64A19", "#512DA8", "#455A64",
+        "#D32F2F", "#303F9F", "#388E3C", "#F57C00", "#C2185B"
+    ];
+    function loadAHPChart() {
+        $('.ahp-container .dimmer').removeClass( 'active' );
+
+        if( AHPChart != null ) AHPChart.destroy();
+        var data = {
+            labels: [],
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: []
+                }
+            ]
+        };
+
+        var colorIndex = 0;
+        for( var key in DataBobot.means ) {
+            data.labels.push(BootstrapData.criteria.aliases[key]);
+            data.datasets[0].data.push( DataBobot.means[key] );
+            data.datasets[0].backgroundColor.push( colorLists[ colorIndex ] );
+            colorIndex = colorIndex >= 9 ? 0 : colorIndex + 1;
+        }
+
+        AHPChart = new Chart(document.getElementById("ahp"), {
+            type: 'doughnut',
+            data: data
+        });
+    }
+
+    function loadTOPSISChart() {
+        $('.topsis-container .dimmer').removeClass( 'active' );
+
+        if( TOPSISChart != null ) TOPSISChart.destroy();
+        var data = {
+            labels: [],
+            datasets: [
+                {
+                    label: 'D-',
+                    data: [],
+                    backgroundColor: '#f44336'
+                },
+                {
+                    label: 'D+',
+                    data: [],
+                    backgroundColor: '#4caf50'
+                },
+                {
+                    label: 'V',
+                    data: [],
+                    backgroundColor: '#ffc107'
+                }
+            ]
+        };
+
+        for( var key in BootstrapData.aircraft.names ) {
+            data.labels.push( BootstrapData.aircraft.names[key] );
+            data.datasets[0].data.push( DataAircraft.d_min[key] );
+            data.datasets[1].data.push( DataAircraft.d_plus[key] );
+            data.datasets[2].data.push( DataAircraft.v[key] );
+        }
+
+        TOPSISChart = new Chart(document.getElementById("topsis"), {
+            type: 'bar',
+            data: data
+        });
+
+    }
+
+    $(document).ready(function(){
+        loadAHPChart();
+        loadTOPSISChart();
+    });
+</script>
+
+{% endblock %}

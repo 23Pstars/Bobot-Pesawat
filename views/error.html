@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}Page error!{% endblock %}
+
+{% block content %}
+
+<div class="ui doubling stackable grid container">
+
+    <!-- reservation title -->
+    <div class="sixteen wide column">
+        <h2 class="ui header">
+            <i class="warning sign icon"></i>
+            <div class="content">
+                {{ message }}
+                <div class="sub header">{{ error.status }}</div>
+            </div>
+        </h2>
+        <pre>{{ error.stack }}</pre>
+    </div>
+
+</div>
+
+{% endblock %}
