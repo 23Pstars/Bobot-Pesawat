@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var app = require( '../app' ),
+    config = require( '../config' ),
+    http = require( 'http' ),
+    os = require( 'os' ),
+    server = http.createServer( app );
+
+
+server.listen( config.port );
+console.log( "Server running on " + os.hostname() + ":" + config.port );

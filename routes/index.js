@@ -1,7 +1,8 @@
-var express = require('express');
-var router = express.Router();
+var config = require( '../config' ),
+    express = require('express'),
+    router = express.Router();
 
-var bootstrap_data = require( '../bootstrap_data' );
+var bootstrap_data = config.bootstrap_data;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -62,7 +63,7 @@ router.get('/', function(req, res, next) {
     data_aircraft.v[p] = data_aircraft.d_min[p] / ( data_aircraft.d_min[p] + data_aircraft.d_plus[p] );
   }
 
-  console.log( data_aircraft );
+  // console.log( data_aircraft );
 
   res.render('index', {
     title: 'Combat Aircraft Hybrid Multi Criteria Decision Making',
